@@ -1,0 +1,195 @@
+import materialesContruccion.*
+
+describe "Materiales"{
+	
+	/* ACLARACIÓN 
+	 * El test asume todos los objetos como instancias de clases. 
+	 * Si el diseño de la solución utiliza objetos bien conocidos en algunos casos entonces 
+	 * se debe remover la declaración de la variable y la línea en que se sugiere la instanciación.
+	 */
+
+ // PRODUCTOS 
+	const alambreFardo = new Producto(metalico=true, arido = false, peso=1)
+	const mallaHierro = new Producto(metalico=true, arido = false, peso=75)
+	const virutaAluminio = new Producto(metalico=true, arido = true, peso=2)
+	const vigaAcero = new Producto(metalico=true, arido = false, peso=300)
+	const bolsaCemento = new Producto(metalico=false, arido = true, peso=50)
+	const ceramica = new Producto(metalico=false, arido = false, peso=2)
+
+// VENDEDORES 
+	var unaVendedoraDeHierros = new VendedoraDeHierros()
+	var unCorralon = new Corralon()
+	var unCorralonMayorista = new CorralonMayorista()
+	var unaFerreteria = new Ferreteria()
+// CONSULTORES 	
+	var unConsultorPorUnidad = new PorUnidad()
+	var unConsultorPorPeso = new PorPeso(pesoMaximo = 90)
+// BUROCRATICOS 	
+	const unaVendedoraHierroBurocratica= new VendedoresBurocraticos(consultor = unConsultorPorUnidad)
+	const otraVendedoraHierroBurocratica =  new VendedoresBurocraticos(consultor = unConsultorPorPeso)
+	
+
+	fixture {
+	/*	// Punto 1
+		unaVendedoraDeHierros = null // TODO: construir/obtener una vendedora de hierros 
+		unCorralon = null // TODO: construir/obtener un corralon
+		unCorralonMayorista = null // TODO: construir/obtener un corralon mayorista
+*/
+			// Punto FERRETERIA
+		unaFerreteria.agregarStock(alambreFardo)
+		unaFerreteria.agregarStock(virutaAluminio)//	obtener una ferreteria con stock = alambreFardo, virutaAluminio y ceramica
+	  
+	 
+		// Punto 3
+	    // 	unConsultorPorPeso // TODO: construir/obtener un consultor por peso con maximo = 90
+		// unConsultorPorUnidad 
+		//unConsultorPorUnidad.agregarProductoAlista(vigaAcero)// TODO: construir/obtener un consultor por unidad que puede aprobar los productos = vigaAcero, virutaAluminio y alambreFardo
+		//unConsultorPorUnidad.agregarProductoAlista(virutaAluminio)
+		//unConsultorPorUnidad.agregarProductoAlista(alambreFardo)
+		
+		//unaVendedoraHierroBurocratica = null // TODO: construir/obtener una vendedora de hierros burocrática con consultores = unConsultorPorPeso
+		// otraVendedoraHierroBurocratica = null // TODO: construir/obtener una vendedora de hierros burocrática con consultores = unConsultorPorPeso y unConsultorPorUnidad
+	}
+//Punto 1	
+//Consultas
+
+	test "puede vender vendedora hierro" {
+		 
+		assert.that(unaVendedoraDeHierros.validar(alambreFardo))
+		assert.that(unaVendedoraDeHierros.validar(mallaHierro))
+		assert.that(unaVendedoraDeHierros.validar(virutaAluminio))
+		assert.that(unaVendedoraDeHierros.validar(vigaAcero))
+		assert.notThat(unaVendedoraDeHierros.validar(bolsaCemento))
+		assert.notThat(unaVendedoraDeHierros.validar(ceramica))
+	}
+
+
+
+	test "puede vender un corralon" {
+		assert.that(unCorralon.validar(alambreFardo))
+		assert.that(unCorralon.validar(mallaHierro))
+		assert.that(unCorralon.validar(virutaAluminio))
+		assert.that(unCorralon.validar(vigaAcero))
+		assert.that(unCorralon.validar(bolsaCemento))
+		assert.notThat(unCorralon.validar(ceramica))
+	}
+
+
+
+	test "puede vender un corralon mayorista" {
+		assert.notThat(unCorralonMayorista.validar(alambreFardo))
+		assert.that(unCorralonMayorista.validar(mallaHierro))
+		assert.notThat(unCorralonMayorista.validar(virutaAluminio))
+		assert.that(unCorralonMayorista.validar(vigaAcero))
+		assert.notThat(unCorralonMayorista.validar(bolsaCemento))
+		assert.notThat(unCorralonMayorista.validar(ceramica))
+	
+	}
+	
+//Acciones
+
+
+	test "vender vendedora hierro" {
+		
+		unaVendedoraDeHierros.vender(alambreFardo)
+		unaVendedoraDeHierros.vender(mallaHierro)
+		unaVendedoraDeHierros.vender(virutaAluminio)
+		unaVendedoraDeHierros.vender(vigaAcero)
+		assert.throwsException({unaVendedoraDeHierros.vender(bolsaCemento)})
+		assert.throwsException({unaVendedoraDeHierros.vender(ceramica)})
+		assert.equals(unaVendedoraDeHierros.listaDeVendidos(),[alambreFardo,mallaHierro,virutaAluminio, vigaAcero])
+	}
+
+
+	test "vender corralon" {
+        unCorralon.vender(alambreFardo)
+		unCorralon.vender(mallaHierro)
+		unCorralon.vender(virutaAluminio)
+		unCorralon.vender(vigaAcero) 
+		unCorralon.vender(bolsaCemento)
+		assert.throwsException({unCorralon.vender(ceramica)})
+		assert.equals(unCorralon.listaDeVendidos(),[alambreFardo,mallaHierro,virutaAluminio, vigaAcero, bolsaCemento]) // TODO: Verificar que unCorralon haya vendido alambreFardo, mallaHierro, virutaAluminio, vigaAcero y bolsaCemento
+	}
+
+
+
+	test "vender corralon Mayorista" {
+		assert.throwsException({unCorralonMayorista.vender(alambreFardo)}) 
+		unCorralonMayorista.vender(mallaHierro) 
+		assert.throwsException({unCorralonMayorista.vender(virutaAluminio)}) 
+		unCorralonMayorista.vender(vigaAcero)
+		assert.throwsException({unCorralonMayorista.vender(bolsaCemento)}) 
+	    assert.throwsException({unCorralonMayorista.vender(ceramica)}) 	
+		assert.equals(unCorralonMayorista.listaDeVendidos(),[mallaHierro, vigaAcero])
+	}
+
+
+//Punto 2	
+
+	test "puede vender una Ferreteria" {
+		unaFerreteria.validar(alambreFardo)
+		assert.throwsException(unaFerreteria.validar(mallaHierro))
+		unaFerreteria.validar(virutaAluminio)
+		assert.throwsException(unaFerreteria.validar(vigaAcero))
+		assert.throwsException(unaFerreteria.validar(bolsaCemento))
+		assert.throwsException(unaFerreteria.validar(ceramica))
+	}
+
+
+  test "vender Ferreteria" {
+		
+		unaFerreteria.vender(alambreFardo)// TODO: Hacer que unaFerreteria venda alambreFardo
+	    assert.throwsException({unaFerreteria.vender(mallaHierro)}) // TODO: Hacer que unaFerreteria venda mallaHierro (NO SE PUEDE!)
+		unaFerreteria.vender(virutaAluminio) // TODO: Hacer que unaFerreteria venda virutaAluminio
+		assert.throwsException({unaFerreteria.vender(virutaAluminio)})// TODO: Hacer que unaFerreteria venda virutaAluminio otra vez (NO SE PUEDE, QUEDO SIN STOCK!)
+	    assert.throwsException({unaFerreteria.vender(vigaAcero)})// TODO: Hacer que unaFerreteria venda vigaAcero (NO SE PUEDE!)
+		assert.throwsException({unaFerreteria.vender(bolsaCemento)})	// TODO: Hacer que unaFerreteria venda bolsaCemento (NO SE PUEDE!)
+		assert.throwsException({unaFerreteria.vender(ceramica)})	// TODO: Hacer que unaFerreteria venda ceramica (NO SE PUEDE!)
+		assert.equals(unaFerreteria.listaDeVendidos(),[alambreFardo, virutaAluminio]) // TODO: Verificar que unaFerreteria haya vendido alambreFardo y virutaAluminio
+		assert.equals(unaFerreteria.listaDeStock(),[ ])	// TODO: Verificar que a unaFerreteria le quedo en stock ceramica
+	}
+
+
+//punto 3
+
+	test "puede vender con burocracia" {
+		unConsultorPorUnidad.agregarProductoAlista(alambreFardo)
+	    unConsultorPorUnidad.agregarProductoAlista(mallaHierro)
+	    unConsultorPorUnidad.agregarProductoAlista(virutaAluminio)
+		unaVendedoraHierroBurocratica.validar(alambreFardo)
+		unaVendedoraHierroBurocratica.validar(mallaHierro)
+		unaVendedoraHierroBurocratica.validar(virutaAluminio)
+		assert.notThat(unaVendedoraHierroBurocratica.validar(vigaAcero))
+		assert.notThat(unaVendedoraHierroBurocratica.validar(bolsaCemento))
+		assert.notThat(unaVendedoraHierroBurocratica.validar(ceramica))
+		
+		}
+
+	test "puede vender con más burocracia aun" {
+		
+
+		otraVendedoraHierroBurocratica.validar(alambreFardo)
+		assert.that(otraVendedoraHierroBurocratica.validar(mallaHierro))
+		assert.that(otraVendedoraHierroBurocratica.validar(virutaAluminio))
+		assert.notThat(otraVendedoraHierroBurocratica.validar(vigaAcero))
+		assert.notThat(otraVendedoraHierroBurocratica.validar(bolsaCemento))
+		assert.notThat(otraVendedoraHierroBurocratica.validar(ceramica))		
+	}
+
+
+
+	test "vender burocracia" {
+		otraVendedoraHierroBurocratica.vender(alambreFardo)     // TODO: Hacer que unaVendedoraHierroBurocratica venda alambreFardo
+		otraVendedoraHierroBurocratica.vender(mallaHierro)     // TODO: Hacer que unaVendedoraHierroBurocratica venda mallaHierro
+		otraVendedoraHierroBurocratica.vender(virutaAluminio) // TODO: Hacer que unaVendedoraHierroBurocratica venda virutaAluminio
+		assert.throwsException({otraVendedoraHierroBurocratica.vender(vigaAcero)})// TODO: Hacer que unaVendedoraHierroBurocratica venda vigaAcero (NO SE PUEDE!)
+		assert.throwsException({otraVendedoraHierroBurocratica.vender(bolsaCemento)})// TODO: Hacer que unaVendedoraHierroBurocratica venda bolsaCemento (NO SE PUEDE!)
+		assert.throwsException({otraVendedoraHierroBurocratica.vender(ceramica)})// TODO: Hacer que unaVendedoraHierroBurocratica venda ceramica (NO SE PUEDE!)
+		assert.equals(otraVendedoraHierroBurocratica.listaDeVendidos(),[alambreFardo,mallaHierro,virutaAluminio]) // TODO: Verificar que unaVendedoraHierroBurocratica haya vendido alambreFardo, mallaHierro y virutaAluminio
+	}
+
+}
+ 	
+	
+
+	
